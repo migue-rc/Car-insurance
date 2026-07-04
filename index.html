@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Miguel R">
-<meta name="dcterms.date" content="2026-04-29">
-<meta name="description" content="Features two end-to-end machine learning projects focused on the automotive and insurance industries. Together, they demonstrate the ability to extract actionable business intelligence from both unlabelled telematics sensors and highly imbalanced insurance datasets.">
+<meta name="dcterms.date" content="2026-07-04">
+<meta name="description" content="Two end-to-end machine learning projects: claim prediction on a highly imbalanced insurance dataset, and unsupervised driver-behavior profiling from telematics sensors.">
 
 <title>Auto Insurance &amp; Telematics Analytics</title>
 <style>
@@ -48,9 +48,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-3f230b53dc93e4a04bf4a3505d77a42a.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-0738663c7c037cf665a86e7eb60c4439.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-9f74c3406a507f2d1f67bd7731720ed3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-0738663c7c037cf665a86e7eb60c4439.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-22e386d673eb27a037a9ab8590791d54.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-df7de8fec9041e4cf553be1fa0c04d3f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-22e386d673eb27a037a9ab8590791d54.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -82,6 +82,19 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="local-style.css">
+<meta property="og:title" content="Auto Insurance &amp; Telematics Analytics">
+<meta property="og:description" content="Two end-to-end machine learning projects: claim prediction on a highly imbalanced insurance dataset, and unsupervised driver-behavior profiling from telematics sensors.">
+<meta property="og:image" content="https://migue-rc.github.io/car-insurance/charts/flow-chart-prev.png">
+<meta property="og:image:alt" content="Project Flow Chart">
+<meta property="og:image:height" content="1324">
+<meta property="og:image:width" content="2500">
+<meta name="twitter:title" content="Auto Insurance &amp; Telematics Analytics">
+<meta name="twitter:description" content="Two end-to-end machine learning projects: claim prediction on a highly imbalanced insurance dataset, and unsupervised driver-behavior profiling from telematics sensors.">
+<meta name="twitter:image" content="https://migue-rc.github.io/car-insurance/charts/flow-chart-prev.png">
+<meta name="twitter:image:alt" content="Project Flow Chart">
+<meta name="twitter:image-height" content="1324">
+<meta name="twitter:image-width" content="2500">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -279,25 +292,22 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#auto-insurance-telematics-analytics-portfolio" id="toc-auto-insurance-telematics-analytics-portfolio" class="nav-link active" data-scroll-target="#auto-insurance-telematics-analytics-portfolio">📊 Auto Insurance &amp; Telematics Analytics Portfolio</a>
+  <li><a href="#core-tech-stack" id="toc-core-tech-stack" class="nav-link active" data-scroll-target="#core-tech-stack">Core Tech Stack</a></li>
+  <li><a href="#project-architecture-overview" id="toc-project-architecture-overview" class="nav-link" data-scroll-target="#project-architecture-overview">Project Architecture Overview</a></li>
+  <li><a href="#project-1-predictive-modeling-for-car-insurance-claims" id="toc-project-1-predictive-modeling-for-car-insurance-claims" class="nav-link" data-scroll-target="#project-1-predictive-modeling-for-car-insurance-claims">Project 1: Predictive Modeling for Car Insurance Claims</a>
   <ul class="collapse">
-  <li><a href="#core-tech-stack" id="toc-core-tech-stack" class="nav-link" data-scroll-target="#core-tech-stack">🛠️ Core Tech Stack</a></li>
-  <li><a href="#project-architecture-overview" id="toc-project-architecture-overview" class="nav-link" data-scroll-target="#project-architecture-overview">🗺️ Project Architecture Overview</a></li>
-  <li><a href="#project-1-predictive-modeling-for-car-insurance-claims" id="toc-project-1-predictive-modeling-for-car-insurance-claims" class="nav-link" data-scroll-target="#project-1-predictive-modeling-for-car-insurance-claims">🛡️ Project 1: Predictive Modeling for Car Insurance Claims</a>
-  <ul class="collapse">
-  <li><a href="#business-context" id="toc-business-context" class="nav-link" data-scroll-target="#business-context">📖 Business Context</a></li>
-  <li><a href="#key-objectives" id="toc-key-objectives" class="nav-link" data-scroll-target="#key-objectives">🎯 Key Objectives</a></li>
-  <li><a href="#the-workflow" id="toc-the-workflow" class="nav-link" data-scroll-target="#the-workflow">⚙️ The Workflow</a></li>
-  <li><a href="#results-business-impact" id="toc-results-business-impact" class="nav-link" data-scroll-target="#results-business-impact">📈 Results &amp; Business Impact</a></li>
+  <li><a href="#business-context" id="toc-business-context" class="nav-link" data-scroll-target="#business-context">Business Context</a></li>
+  <li><a href="#key-objectives" id="toc-key-objectives" class="nav-link" data-scroll-target="#key-objectives">Key Objectives</a></li>
+  <li><a href="#the-workflow" id="toc-the-workflow" class="nav-link" data-scroll-target="#the-workflow">The Workflow</a></li>
+  <li><a href="#results-business-impact" id="toc-results-business-impact" class="nav-link" data-scroll-target="#results-business-impact">Results &amp; Business Impact</a></li>
   </ul></li>
-  <li><a href="#project-2-driver-behavior-profiling-unsupervised-telematics" id="toc-project-2-driver-behavior-profiling-unsupervised-telematics" class="nav-link" data-scroll-target="#project-2-driver-behavior-profiling-unsupervised-telematics">🚗 Project 2: Driver Behavior Profiling (Unsupervised Telematics)</a>
+  <li><a href="#project-2-driver-behavior-profiling-unsupervised-telematics" id="toc-project-2-driver-behavior-profiling-unsupervised-telematics" class="nav-link" data-scroll-target="#project-2-driver-behavior-profiling-unsupervised-telematics">Project 2: Driver Behavior Profiling (Unsupervised Telematics)</a>
   <ul class="collapse">
-  <li><a href="#business-context-1" id="toc-business-context-1" class="nav-link" data-scroll-target="#business-context-1">📖 Business Context</a></li>
-  <li><a href="#key-objectives-1" id="toc-key-objectives-1" class="nav-link" data-scroll-target="#key-objectives-1">🎯 Key Objectives</a></li>
-  <li><a href="#the-workflow-1" id="toc-the-workflow-1" class="nav-link" data-scroll-target="#the-workflow-1">⚙️ The Workflow</a></li>
-  <li><a href="#interactive-cluster-visualization" id="toc-interactive-cluster-visualization" class="nav-link" data-scroll-target="#interactive-cluster-visualization">📊 Interactive Cluster Visualization</a></li>
-  <li><a href="#results-validation" id="toc-results-validation" class="nav-link" data-scroll-target="#results-validation">📈 Results &amp; Validation</a></li>
-  </ul></li>
+  <li><a href="#business-context-1" id="toc-business-context-1" class="nav-link" data-scroll-target="#business-context-1">Business Context</a></li>
+  <li><a href="#key-objectives-1" id="toc-key-objectives-1" class="nav-link" data-scroll-target="#key-objectives-1">Key Objectives</a></li>
+  <li><a href="#the-workflow-1" id="toc-the-workflow-1" class="nav-link" data-scroll-target="#the-workflow-1">The Workflow</a></li>
+  <li><a href="#interactive-cluster-visualization" id="toc-interactive-cluster-visualization" class="nav-link" data-scroll-target="#interactive-cluster-visualization">Interactive Cluster Visualization</a></li>
+  <li><a href="#results-validation" id="toc-results-validation" class="nav-link" data-scroll-target="#results-validation">Results &amp; Validation</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -313,7 +323,7 @@ ul.task-list li input[type="checkbox"] {
 
 <div>
   <div class="description">
-    Features two end-to-end machine learning projects focused on the automotive and insurance industries. Together, they demonstrate the ability to extract actionable business intelligence from both unlabelled telematics sensors and highly imbalanced insurance datasets.
+    Two end-to-end machine learning projects: claim prediction on a highly imbalanced insurance dataset, and unsupervised driver-behavior profiling from telematics sensors.
   </div>
 </div>
 
@@ -330,7 +340,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 29, 2026</p>
+      <p class="date">July 4, 2026</p>
     </div>
   </div>
   
@@ -342,98 +352,103 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="auto-insurance-telematics-analytics-portfolio" class="level1">
-<h1>📊 Auto Insurance &amp; Telematics Analytics Portfolio</h1>
-<p>Welcome to my data science portfolio. This repository features two end-to-end machine learning projects focused on the automotive and insurance industries. Together, they demonstrate the ability to extract actionable business intelligence from both unlabelled telematics sensors and highly imbalanced insurance datasets.</p>
-<p>The goal of this repository is to showcase end-to-end analytical thinking, robust statistical methodologies, and machine learning models built specifically to drive business value.</p>
+<p>Welcome. This repository features two end-to-end machine learning projects focused on the automotive and insurance industries. Together, they demonstrate how to extract actionable business intelligence from both unlabelled telematics sensors and highly imbalanced insurance datasets.</p>
+<p>The goal is to showcase end-to-end analytical thinking, robust statistical methodology, and machine learning models built to drive business value.</p>
 <hr>
 <section id="core-tech-stack" class="level3">
-<h3 class="anchored" data-anchor-id="core-tech-stack">🛠️ Core Tech Stack</h3>
-<p><strong>Languages &amp; Frameworks:</strong> Python (&gt;=3.14) <strong>Libraries:</strong> <code>scikit-learn</code>, <code>pandas</code>, <code>numpy</code>, <code>statsmodels</code>, <code>shap</code>, <code>plotly</code>, <code>matplotlib</code>, <code>seaborn</code></p>
+<h3 class="anchored" data-anchor-id="core-tech-stack">Core Tech Stack</h3>
+<p><strong>Languages &amp; Frameworks:</strong> Python (&gt;=3.12) <strong>Libraries:</strong> <code>scikit-learn</code>, <code>pandas</code>, <code>numpy</code>, <code>statsmodels</code>, <code>shap</code>, <code>plotly</code>, <code>matplotlib</code>, <code>seaborn</code></p>
 <hr>
 </section>
 <section id="project-architecture-overview" class="level3">
-<h3 class="anchored" data-anchor-id="project-architecture-overview">🗺️ Project Architecture Overview</h3>
+<h3 class="anchored" data-anchor-id="project-architecture-overview">Project Architecture Overview</h3>
 <p>Below is the interactive flowchart outlining the data engineering and modeling processes used across the projects.</p>
-<p><em>Click the image below to view and interact with the full flowchart!</em> <a href="https://migue-rc.github.io/car-insurance/charts/interactive%20flow%20chart.html"><img src="charts/flow chart prev.png" class="img-fluid" alt="Project Flow Chart"></a></p>
+<p><em>Click the image to view and interact with the full flowchart.</em> <a href="https://migue-rc.github.io/car-insurance/charts/interactive-flow-chart.html"><img src="charts/flow-chart-prev.png" class="img-fluid" alt="Project Flow Chart"></a></p>
 <hr>
 </section>
 <section id="project-1-predictive-modeling-for-car-insurance-claims" class="level2">
-<h2 class="anchored" data-anchor-id="project-1-predictive-modeling-for-car-insurance-claims">🛡️ Project 1: Predictive Modeling for Car Insurance Claims</h2>
+<h2 class="anchored" data-anchor-id="project-1-predictive-modeling-for-car-insurance-claims">Project 1: Predictive Modeling for Car Insurance Claims</h2>
 <blockquote class="blockquote">
-<p><strong>File:</strong> <a href="./insurance claim.html"><code>insurance claim.ipynb</code></a> | <strong>Status:</strong> Completed ✅ | <strong>Performance:</strong> 0.65 ROC-AUC &amp; 64% Recall 🏆</p>
+<p><strong>File:</strong> <a href="./insurance-claim.html"><code>insurance-claim.ipynb</code></a> | <strong>Status:</strong> Completed | <strong>Performance:</strong> 0.65 cross-validated AUC, 68% recall at the tuned threshold</p>
 </blockquote>
 <section id="business-context" class="level3">
-<h3 class="anchored" data-anchor-id="business-context">📖 Business Context</h3>
-<p>Predicting car insurance claims is notoriously difficult due to extreme class imbalance (only ~6% of policies result in a claim in this dataset). Traditional accuracy metrics are misleading in this context, masking the business cost of missed claims. This project builds a robust machine learning pipeline to identify high-risk drivers and physical vehicle attributes, translating complex non-linear patterns into actionable risk-management strategies.</p>
+<h3 class="anchored" data-anchor-id="business-context">Business Context</h3>
+<p>Predicting car insurance claims is notoriously difficult due to extreme class imbalance (only ~6% of policies in this dataset result in a claim). Traditional accuracy metrics are misleading in this context, masking the business cost of missed claims. This project builds a robust machine learning pipeline to identify high-risk drivers and vehicle attributes, translating complex non-linear patterns into actionable risk-management strategies.</p>
 </section>
 <section id="key-objectives" class="level3">
-<h3 class="anchored" data-anchor-id="key-objectives">🎯 Key Objectives</h3>
+<h3 class="anchored" data-anchor-id="key-objectives">Key Objectives</h3>
 <ol type="1">
-<li><strong>Eradicate Multicollinearity:</strong> Automate the removal of structural multicollinearity (e.g., overlapping car physical dimensions and engine specs) using distributed Variance Inflation Factor (VIF) calculations.</li>
-<li><strong>Statistical Inference:</strong> Utilize Stepwise Logistic Regression to distill 80+ features into the core mathematical drivers of insurance risk.</li>
-<li><strong>Predictive Machine Learning:</strong> Execute a hyperparameter-tuned “Model Bake-Off” between Linear, Bagging, and Boosting algorithms.</li>
-<li><strong>Business Threshold Optimization:</strong> Recalibrate the model’s decision threshold to maximize the capture of actual claims (Recall) without overwhelming the business with false alarms.</li>
+<li><strong>Eradicate Multicollinearity:</strong> Automate the removal of structural multicollinearity (e.g., overlapping car physical dimensions and engine specs) using Variance Inflation Factor (VIF) calculations.</li>
+<li><strong>Statistical Inference:</strong> Use Stepwise Logistic Regression to distill 80+ features into the core statistical drivers of insurance risk.</li>
+<li><strong>Predictive Machine Learning:</strong> Run a hyperparameter-tuned “Model Bake-Off” between linear, bagging, and boosting algorithms.</li>
+<li><strong>Business Threshold Optimization:</strong> Recalibrate the decision threshold to maximize the capture of actual claims (recall) without overwhelming the business with false alarms.</li>
 </ol>
 </section>
 <section id="the-workflow" class="level3">
-<h3 class="anchored" data-anchor-id="the-workflow">⚙️ The Workflow</h3>
+<h3 class="anchored" data-anchor-id="the-workflow">The Workflow</h3>
 <ol type="1">
-<li><strong>Data Engineering &amp; Feature Selection:</strong> Cleaned string representations of torque/power, mapped binaries, and dynamically bucketed sparse geographic categories (&lt; 1% frequency). Dropped 56 highly correlated features using a strict VIF threshold of 5.0.</li>
-<li><strong>Statistical Modeling:</strong> Deployed a custom Stepwise Logistic Regression algorithm (p-value &lt; 0.05) to isolate 9 statistically significant features. <em>Insight: Older cars dramatically reduce claim risk, while premium feature packages (<code>is_brake_assist_Yes</code>) and policy tenure increase it.</em></li>
-<li><strong>Model Bake-Off:</strong> Conducted a <code>GridSearchCV</code> on Logistic Regression, Random Forest, and HistGradientBoosting using <code>class_weight='balanced'</code>. Random Forest outperformed other models with the highest ROC-AUC score, proving the presence of non-linear risk factors.</li>
-<li><strong>Threshold Tuning:</strong> Calculated Youden’s J Statistic to optimize the decision boundary for the imbalanced reality of the data.</li>
+<li><strong>Data Engineering &amp; Feature Selection:</strong> Cleaned string representations of torque/power, mapped binary flags, and dynamically bucketed sparse geographic categories (&lt; 1% frequency). Dropped 56 highly correlated features using a strict VIF threshold of 5.0.</li>
+<li><strong>Statistical Modeling:</strong> Deployed a custom Stepwise Logistic Regression (p-value &lt; 0.05) to isolate the statistically significant features. <em>Insight: older cars dramatically reduce claim risk, while premium feature packages (<code>is_brake_assist_Yes</code>) and policy tenure increase it.</em></li>
+<li><strong>Model Bake-Off:</strong> Ran <code>GridSearchCV</code> over Logistic Regression, Random Forest, and HistGradientBoosting with <code>class_weight='balanced'</code>. <strong>HistGradientBoosting</strong> won with a cross-validated AUC of 0.651, narrowly ahead of Random Forest (0.648) and clearly ahead of the linear model (0.610) — evidence of non-linear risk factors.</li>
+<li><strong>Threshold Tuning:</strong> Used Youden’s J statistic to shift the decision boundary (optimal threshold 0.496) for the imbalanced reality of the data.</li>
 </ol>
 </section>
 <section id="results-business-impact" class="level3">
-<h3 class="anchored" data-anchor-id="results-business-impact">📈 Results &amp; Business Impact</h3>
-<p>By shifting the focus from standard accuracy to optimized Recall, the final Random Forest model delivered significant business value: * <strong>High Recall (64%):</strong> The model successfully captured 64% of the entire risk pool (746 out of 1161 actual claims) from unseen test data. * <strong>Precision Lift:</strong> While precision naturally sits at 10%, the baseline standard for a claim is only 6%. The model successfully isolated a specific sub-population of drivers whose risk of crashing is nearly double the average, justifying targeted premium adjustments.</p>
+<h3 class="anchored" data-anchor-id="results-business-impact">Results &amp; Business Impact</h3>
+<p>By optimizing for recall rather than raw accuracy, the final boosted model delivers real business value:</p>
+<ul>
+<li><strong>High Recall (68%):</strong> The model captures 765 of the 1,124 actual claims in the unseen test set.</li>
+<li><strong>Precision in context:</strong> Precision sits at 9% — but the base claim rate is only 6.4%. The flagged sub-population files claims at roughly 1.5x the average rate, enough to justify targeted premium adjustments. This is an honest reflection of how hard claim prediction is; inflated numbers here would signal leakage, not skill.</li>
+</ul>
 <hr>
 </section>
 </section>
 <section id="project-2-driver-behavior-profiling-unsupervised-telematics" class="level2">
-<h2 class="anchored" data-anchor-id="project-2-driver-behavior-profiling-unsupervised-telematics">🚗 Project 2: Driver Behavior Profiling (Unsupervised Telematics)</h2>
+<h2 class="anchored" data-anchor-id="project-2-driver-behavior-profiling-unsupervised-telematics">Project 2: Driver Behavior Profiling (Unsupervised Telematics)</h2>
 <blockquote class="blockquote">
-<p><strong>File:</strong> <a href="./labeling drivers.html"><code>labeling drivers.ipynb</code></a> | <strong>Status:</strong> Completed ✅ | <strong>Validation Score:</strong> 1.00 ARI 🏆</p>
+<p><strong>File:</strong> <a href="./labeling-drivers.html"><code>labeling-drivers.ipynb</code></a> | <strong>Status:</strong> Completed | <strong>Validation:</strong> 1.00 ARI (synthetic data)</p>
 </blockquote>
 <section id="business-context-1" class="level3">
-<h3 class="anchored" data-anchor-id="business-context-1">📖 Business Context</h3>
-<p>In real-world Usage-Based Insurance (UBI), driver behavior data is abundant but rarely pre-labeled. This project builds a Machine Learning pipeline to automatically categorize drivers into distinct behavioral profiles (<strong>Safe</strong>, <strong>Aggressive</strong>, <strong>Distracted</strong>) using raw telematics data.</p>
-<p><strong>The “Real-World” Twist:</strong> Although the original dataset contained labeled data (ground truth), this project intentionally treats the problem as Unsupervised Learning. It demonstrates how to use <strong>Dimensionality Reduction (PCA)</strong> and <strong>Clustering (K-Means)</strong> to mathematically discover these behaviors from scratch.</p>
+<h3 class="anchored" data-anchor-id="business-context-1">Business Context</h3>
+<p>In real-world Usage-Based Insurance (UBI), driver behavior data is abundant but rarely pre-labeled. This project builds a machine learning pipeline to automatically categorize drivers into distinct behavioral profiles (<strong>Safe</strong>, <strong>Aggressive</strong>, <strong>Distracted</strong>) using raw telematics data.</p>
+<p><strong>The “Real-World” Twist:</strong> although the original dataset contains labels (ground truth), this project intentionally treats the problem as unsupervised. It demonstrates how to use <strong>Dimensionality Reduction (PCA)</strong> and <strong>Clustering (K-Means)</strong> to discover these behaviors mathematically, from scratch.</p>
 </section>
 <section id="key-objectives-1" class="level3">
-<h3 class="anchored" data-anchor-id="key-objectives-1">🎯 Key Objectives</h3>
+<h3 class="anchored" data-anchor-id="key-objectives-1">Key Objectives</h3>
 <ol type="1">
-<li><strong>Simulate Real-World Conditions:</strong> Train a model without access to the target variable (<code>driver_label</code>).</li>
-<li><strong>Dimensionality Reduction:</strong> Compress noisy sensor data into meaningful “Behavioral Dimensions.”</li>
+<li><strong>Simulate Real-World Conditions:</strong> Train without access to the target variable (<code>driver_label</code>).</li>
+<li><strong>Dimensionality Reduction:</strong> Compress noisy sensor data into meaningful “behavioral dimensions.”</li>
 <li><strong>Automatic Profiling:</strong> Group drivers based on their PCA coordinates.</li>
-<li><strong>Validation:</strong> Compare the unsupervised clusters against the hidden ground truth to measure the model’s ability to “recover” true labels.</li>
+<li><strong>Validation:</strong> Compare the unsupervised clusters against the withheld ground truth to measure how well the pipeline recovers the true labels.</li>
 </ol>
 </section>
 <section id="the-workflow-1" class="level3">
-<h3 class="anchored" data-anchor-id="the-workflow-1">⚙️ The Workflow</h3>
+<h3 class="anchored" data-anchor-id="the-workflow-1">The Workflow</h3>
 <ol type="1">
-<li><strong>Correlation Analysis:</strong> Identified an <strong>“Aggression Box”</strong> where Speed, Acceleration, and Braking were highly multicollinear.</li>
-<li><strong>Dimensionality Reduction (PCA):</strong> Reduced the dataset to <strong>3 components</strong>, explaining <strong>~80%</strong> of the variance:
+<li><strong>Correlation Analysis:</strong> Identified an “aggression box” where speed, acceleration, and braking are highly multicollinear.</li>
+<li><strong>Dimensionality Reduction (PCA):</strong> Reduced the dataset to <strong>3 components</strong> explaining <strong>~80%</strong> of the variance:
 <ul>
-<li><strong>PC1 (Aggression):</strong> High <code>throttle</code>, <code>brake_pressure</code>, <code>accel_x</code></li>
-<li><strong>PC2 (Distraction):</strong> High <code>phone_usage</code>, <code>reaction_time</code>, <code>lane_deviation</code></li>
-<li><strong>PC3 (Geometry):</strong> Purely <code>steering_angle</code></li>
+<li><strong>PC1 (Aggression):</strong> high <code>throttle</code>, <code>brake_pressure</code>, <code>accel_x</code></li>
+<li><strong>PC2 (Distraction):</strong> high <code>phone_usage</code>, <code>reaction_time</code>, <code>lane_deviation</code></li>
+<li><strong>PC3 (Geometry):</strong> purely <code>steering_angle</code></li>
 </ul></li>
 <li><strong>Unsupervised Clustering (K-Means):</strong> Applied K-Means (k=3) to segment drivers into Safe, Distracted, and Aggressive clusters.</li>
 </ol>
 </section>
 <section id="interactive-cluster-visualization" class="level3">
-<h3 class="anchored" data-anchor-id="interactive-cluster-visualization">📊 Interactive Cluster Visualization</h3>
-<p><em>Click the image below to explore the interactive 3D scatter plot of the behavioral clusters!</em> <a href="https://migue-rc.github.io/car-insurance/charts/interactive%20scatter.html"><img src="charts/scatter prev.png" class="img-fluid" alt="Driver Behavior Clusters"></a></p>
+<h3 class="anchored" data-anchor-id="interactive-cluster-visualization">Interactive Cluster Visualization</h3>
+<p><em>Click the image to explore the interactive 3D scatter plot of the behavioral clusters.</em> <a href="https://migue-rc.github.io/car-insurance/charts/interactive-scatter.html"><img src="charts/scatter-prev.png" class="img-fluid" alt="Driver Behavior Clusters"></a></p>
 </section>
 <section id="results-validation" class="level3">
-<h3 class="anchored" data-anchor-id="results-validation">📈 Results &amp; Validation</h3>
-<p>Using the withheld labels to validate the unsupervised learning: * <strong>Adjusted Rand Score (ARI):</strong> 1.00 * <strong>Homogeneity Score:</strong> 1.00</p>
-<p><strong>Conclusion:</strong> The model achieved a perfect score, proving that driver behaviors are mathematically distinct and linearly separable in the PCA space. We can effectively auto-label new telematics data with 100% accuracy without needing human supervision, providing a scalable solution for telematics-based risk assessment.</p>
+<h3 class="anchored" data-anchor-id="results-validation">Results &amp; Validation</h3>
+<p>Using the withheld labels to validate the unsupervised clusters:</p>
+<ul>
+<li><strong>Adjusted Rand Score (ARI):</strong> 1.00</li>
+<li><strong>Homogeneity Score:</strong> 1.00</li>
+</ul>
+<p><strong>A necessary caveat:</strong> a perfect score is a hallmark of <em>synthetic</em> data — the generator produced cleanly separable behaviors, and real telematics data would never cluster this perfectly. The value demonstrated here is the pipeline itself: compressing raw sensor streams with PCA, discovering structure without labels, and validating rigorously against withheld ground truth. On this dataset, that pipeline recovers the true driver profiles exactly.</p>
 
 
-</section>
 </section>
 </section>
 
@@ -524,7 +539,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/migue-rc\.github\.io\/car-insurance\/");
+        var filterRegex = new RegExp("https:\/\/migue-rc\.github\.io\/car-insurance");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

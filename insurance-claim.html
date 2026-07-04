@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>insurance-claim</title>
+<title>Predicting Car Insurance Claims</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -80,9 +80,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-3f230b53dc93e4a04bf4a3505d77a42a.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-0738663c7c037cf665a86e7eb60c4439.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-9f74c3406a507f2d1f67bd7731720ed3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-0738663c7c037cf665a86e7eb60c4439.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-22e386d673eb27a037a9ab8590791d54.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-df7de8fec9041e4cf553be1fa0c04d3f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-22e386d673eb27a037a9ab8590791d54.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -146,6 +146,17 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="local-style.css">
+<meta property="og:title" content="Predicting Car Insurance Claims">
+<meta property="og:description" content="Two end-to-end machine learning projects on car insurance claims and driver telematics.">
+<meta property="og:image" content="https://migue-rc.github.io/car-insurance/insurance-claim_files/figure-html/cell-4-output-1.png">
+<meta property="og:image:height" content="990">
+<meta property="og:image:width" content="1189">
+<meta name="twitter:title" content="Predicting Car Insurance Claims">
+<meta name="twitter:description" content="Two end-to-end machine learning projects on car insurance claims and driver telematics.">
+<meta name="twitter:image" content="https://migue-rc.github.io/car-insurance/insurance-claim_files/figure-html/cell-4-output-1.png">
+<meta name="twitter:image-height" content="990">
+<meta name="twitter:image-width" content="1189">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -343,25 +354,54 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#data" id="toc-data" class="nav-link active" data-scroll-target="#data">Data</a></li>
-  <li><a href="#plan" id="toc-plan" class="nav-link" data-scroll-target="#plan">Plan</a></li>
-  <li><a href="#lowest-chances-to-claim-ordered-by-importance" id="toc-lowest-chances-to-claim-ordered-by-importance" class="nav-link" data-scroll-target="#lowest-chances-to-claim-ordered-by-importance">Lowest chances to claim, ordered by importance:</a></li>
-  <li><a href="#higher-chances-to-claim-ordered-by-importance" id="toc-higher-chances-to-claim-ordered-by-importance" class="nav-link" data-scroll-target="#higher-chances-to-claim-ordered-by-importance">Higher chances to claim, ordered by importance:</a></li>
-  <li><a href="#taking-a-deep-dive-on-the-random-forest-best-model." id="toc-taking-a-deep-dive-on-the-random-forest-best-model." class="nav-link" data-scroll-target="#taking-a-deep-dive-on-the-random-forest-best-model.">Taking a deep dive on the random forest best model.</a>
+  <li><a href="#data-audit" id="toc-data-audit" class="nav-link active" data-scroll-target="#data-audit">1. Data Audit</a></li>
+  <li><a href="#data-engineering" id="toc-data-engineering" class="nav-link" data-scroll-target="#data-engineering">2. Data Engineering</a>
+  <ul class="collapse">
+  <li><a href="#the-plan" id="toc-the-plan" class="nav-link" data-scroll-target="#the-plan">The plan</a></li>
+  </ul></li>
+  <li><a href="#multicollinearity-and-vif" id="toc-multicollinearity-and-vif" class="nav-link" data-scroll-target="#multicollinearity-and-vif">3. Multicollinearity and VIF</a></li>
+  <li><a href="#statistical-modeling-stepwise-logistic-regression" id="toc-statistical-modeling-stepwise-logistic-regression" class="nav-link" data-scroll-target="#statistical-modeling-stepwise-logistic-regression">4. Statistical Modeling: Stepwise Logistic Regression</a>
+  <ul class="collapse">
+  <li><a href="#lower-claim-risk-by-coefficient-size" id="toc-lower-claim-risk-by-coefficient-size" class="nav-link" data-scroll-target="#lower-claim-risk-by-coefficient-size">Lower claim risk (by coefficient size)</a></li>
+  <li><a href="#higher-claim-risk-by-coefficient-size" id="toc-higher-claim-risk-by-coefficient-size" class="nav-link" data-scroll-target="#higher-claim-risk-by-coefficient-size">Higher claim risk (by coefficient size)</a></li>
+  </ul></li>
+  <li><a href="#model-bake-off" id="toc-model-bake-off" class="nav-link" data-scroll-target="#model-bake-off">5. Model Bake-Off</a></li>
+  <li><a href="#threshold-tuning" id="toc-threshold-tuning" class="nav-link" data-scroll-target="#threshold-tuning">6. Threshold Tuning</a>
   <ul class="collapse">
   <li><a href="#precision-predicted-claims-that-were-claims-divided-by-all-predicted-claims" id="toc-precision-predicted-claims-that-were-claims-divided-by-all-predicted-claims" class="nav-link" data-scroll-target="#precision-predicted-claims-that-were-claims-divided-by-all-predicted-claims">Precision (predicted claims that were claims divided by all predicted claims)</a></li>
   <li><a href="#recall-predicted-claims-that-were-claims-divided-by-all-actual-claims" id="toc-recall-predicted-claims-that-were-claims-divided-by-all-actual-claims" class="nav-link" data-scroll-target="#recall-predicted-claims-that-were-claims-divided-by-all-actual-claims">Recall (predicted claims that were claims divided by all actual claims)</a></li>
+  </ul></li>
+  <li><a href="#conclusions" id="toc-conclusions" class="nav-link" data-scroll-target="#conclusions">7. Conclusions</a>
+  <ul class="collapse">
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
   </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Predicting Car Insurance Claims</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
+
+
+<p>Only about 6% of the policies in this dataset ever file a claim. That imbalance makes claim prediction a genuinely hard problem: accuracy is meaningless, and a model that never flags anyone scores 94%. This notebook walks the full pipeline — data engineering, multicollinearity pruning, statistical feature selection, a model bake-off, and business-aware threshold tuning — with the goal of catching as many real claims as possible at an acceptable false-alarm rate.</p>
 <div id="92dca1f045aa4053" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-04-30T00:17:51.398006Z&quot;,&quot;start_time&quot;:&quot;2026-04-30T00:17:50.928341Z&quot;}}" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
@@ -671,7 +711,9 @@ dtypes: float64(4), int64(12), str(28)
 memory usage: 19.7 MB</code></pre>
 </div>
 </div>
-<p>The types for some variables don’t make any sense.</p>
+<section id="data-audit" class="level2">
+<h2 class="anchored" data-anchor-id="data-audit">1. Data Audit</h2>
+<p>Some variable types don’t make sense at first glance, so we audit them before modeling.</p>
 <p>policy_id should be dropped for the feature selection.</p>
 <div id="db48247095cc85b8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-04-30T00:17:58.148024Z&quot;,&quot;start_time&quot;:&quot;2026-04-30T00:17:57.076057Z&quot;}}" data-execution_count="3">
 <details class="code-fold">
@@ -712,7 +754,7 @@ memory usage: 19.7 MB</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="insurance claim_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="insurance-claim_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -737,15 +779,15 @@ Possible engine types:
 ['F8D Petrol Engine', '1.2 L K12N Dualjet', '1.0 SCe', '1.5 L U2 CRDi', '1.5 Turbocharged Revotorq', 'K Series Dual jet', '1.2 L K Series Engine', 'K10C', 'i-DTEC', 'G12B', '1.5 Turbocharged Revotron']</code></pre>
 </div>
 </div>
-<section id="data" class="level2">
-<h2 class="anchored" data-anchor-id="data">Data</h2>
+</section>
+<section id="data-engineering" class="level2">
+<h2 class="anchored" data-anchor-id="data-engineering">2. Data Engineering</h2>
 <ol type="1">
 <li>We have a lot of categories per column, if we create a dummy encoding, we are going to have a lot of columns.</li>
-<li>There are some columns that are represented in another one, like per example, the combination of the segment, the model and the engine type will check the majority of the boolean flags.</li>
+<li>There are some columns that are represented in another one, like for example, the combination of the segment, the model and the engine type will check the majority of the boolean flags.</li>
 </ol>
-</section>
-<section id="plan" class="level2">
-<h2 class="anchored" data-anchor-id="plan">Plan</h2>
+<section id="the-plan" class="level3">
+<h3 class="anchored" data-anchor-id="the-plan">The plan</h3>
 <p>To not completely lose the data, when one category represents less than the 10% of the column, this category will be replaced by the most common category; this is called <strong>bucketing</strong>.</p>
 <p>By bucketing rare categories, we are <strong>protecting the model from overfitting</strong>. Where if not, the model will learn the exact value of the category and have a bad generalization performance.</p>
 <div id="401aed95540a6eed" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T14:18:28.951247Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T14:18:28.890864Z&quot;}}" data-execution_count="4">
@@ -865,17 +907,27 @@ Clean-up complete! Final dataset shape: (58592, 81)</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="insurance claim_files/figure-html/cell-8-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="insurance-claim_files/figure-html/cell-8-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
+</section>
+</section>
+<section id="multicollinearity-and-vif" class="level2">
+<h2 class="anchored" data-anchor-id="multicollinearity-and-vif">3. Multicollinearity and VIF</h2>
+<p>Multicollinearity is when <strong>two or more predictor</strong> variables in a regression model are <strong>highly linearly correlated</strong>, so they provide <strong>overlapping information</strong> about the outcome.</p>
+<p>for example if we want to predict the price in a house, we know that basically how big and where is located are the main predictors anywhere, and for example, if we have multiples coulmns about the location of the house, zipcode, coordinates, county, neiborhod, probably we are overlapping information with them.</p>
+<p>Why it is bad?</p>
+<p>This kind of overlapping can poison your final model, for example in the simplest linear reggresion, we know that basically we have a model with weights and a bias, in order to the model to predict the correct final price, we train a model, it compensates by pushing neighborhood weight high and zipcode weight negative, new data arrives with an unseen neighborhood but same zipcode, the negative zipcode weight tanks the prediction.</p>
+<pre class="mermaid"><code>graph LR
+A( Model gets confused ) --&gt; B( Math breaks down ) --&gt; C( You can't trust the numbers) --&gt; D(You can't interpret the results ) --&gt; E( You can't act on them )</code></pre>
 <div id="f5c7db699cd1e5f9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T14:24:14.288544Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T14:19:31.186604Z&quot;}}" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels_utils <span class="im">import</span> calculate_and_drop_vif</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>X_clean, dropped_features <span class="op">=</span> calculate_and_drop_vif(X)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels_utils <span class="im">import</span> calculate_and_drop_vif</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>X_clean, dropped_features <span class="op">=</span> calculate_and_drop_vif(X)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Starting VIF Multicollinearity Check...
@@ -1045,36 +1097,40 @@ Features dropped: 56</code></pre>
 <div id="bbc243389df8b27e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T14:24:14.306054Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T14:24:14.296483Z&quot;}}" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dropped_features)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dropped_features)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>['make', 'airbags', 'displacement', 'cylinder', 'gear_box', 'turning_radius', 'length', 'width', 'height', 'gross_weight', 'ncap_rating', 'torque_value', 'torque_rpm', 'power_value', 'power_rpm', 'segment_B1', 'segment_B2', 'segment_C1', 'segment_C2', 'segment_Utility', 'model_M10', 'model_M2', 'model_M3', 'model_M4', 'model_M5', 'model_M6', 'model_M7', 'model_M8', 'model_M9', 'fuel_type_Diesel', 'fuel_type_Petrol', 'engine_type_1.2 L K Series Engine', 'engine_type_1.2 L K12N Dualjet', 'engine_type_1.5 L U2 CRDi', 'engine_type_1.5 Turbocharged Revotorq', 'engine_type_F8D Petrol Engine', 'engine_type_G12B', 'engine_type_K Series Dual jet', 'engine_type_K10C', 'engine_type_i-DTEC', 'is_esc_Yes', 'is_adjustable_steering_Yes', 'is_tpms_Yes', 'is_parking_sensors_Yes', 'is_parking_camera_Yes', 'rear_brakes_type_Drum', 'steering_type_Manual', 'is_rear_window_wiper_Yes', 'is_power_door_locks_Yes', 'is_central_locking_Yes', 'is_driver_seat_height_adjustable_Yes', 'is_front_fog_lights_Yes', 'population_density', 'is_rear_window_washer_Yes', 'steering_type_Power', 'area_cluster_C8']</code></pre>
 </div>
 </div>
 <p><span class="math display">\[VIF = \frac{1}{1 - R^2}\]</span></p>
-<p>When one of the variables, like per example <code>engine_type_K10C</code>, can be 100% predicted by other variable, its <span class="math inline">\(R^2\)</span> score is exactly <span class="math inline">\(1.0\)</span>. That’s why we have the warning of divided by zero, and the VIF is infinite.</p>
+<p>When one of the variables, like for example <code>engine_type_K10C</code>, can be 100% predicted by other variable, its <span class="math inline">\(R^2\)</span> score is exactly <span class="math inline">\(1.0\)</span>. That’s why we have the warning of divided by zero, and the VIF is infinite.</p>
 <p>This is a win because we are eliminating the multicollinearity from the model.</p>
-<p>per example, inside some models, all those variables don’t change across them.</p>
+<p>for example, inside some models, all those variables don’t change across them.</p>
 <div id="8eecbcda6c181b06" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T14:24:14.574323Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T14:24:14.306655Z&quot;}}" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>plot_correlation_heatmap(X_clean, <span class="st">"Correlation Heatmap AFTER VIF (Independent Multicollinearity)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>plot_correlation_heatmap(X_clean, <span class="st">"Correlation Heatmap AFTER VIF (Independent Multicollinearity)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="insurance claim_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="insurance-claim_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
+</section>
+<section id="statistical-modeling-stepwise-logistic-regression" class="level2">
+<h2 class="anchored" data-anchor-id="statistical-modeling-stepwise-logistic-regression">4. Statistical Modeling: Stepwise Logistic Regression</h2>
+<p>Before reaching for machine learning, we fit a statistical model. Stepwise selection (p &lt; 0.05 to enter and to stay) distills the 80+ engineered features down to the handful with genuine statistical support, and the fitted coefficients are directly interpretable as log-odds contributions.</p>
 <div id="c5d95304405da86d" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T14:24:18.522792Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T14:24:14.583603Z&quot;}}" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels_utils <span class="im">import</span> stepwise_selection_logit</span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(X_clean.columns.tolist())</span>
-<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>best_model, final_features <span class="op">=</span> stepwise_selection_logit(X_clean, y, threshold_in<span class="op">=</span><span class="fl">0.05</span>, threshold_out<span class="op">=</span><span class="fl">0.05</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels_utils <span class="im">import</span> stepwise_selection_logit</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(X_clean.columns.tolist())</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>best_model, final_features <span class="op">=</span> stepwise_selection_logit(X_clean, y, threshold_in<span class="op">=</span><span class="fl">0.05</span>, threshold_out<span class="op">=</span><span class="fl">0.05</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>['policy_tenure', 'age_of_car', 'age_of_policyholder', 'area_cluster_C10', 'area_cluster_C11', 'area_cluster_C12', 'area_cluster_C13', 'area_cluster_C14', 'area_cluster_C15', 'area_cluster_C19', 'area_cluster_C2', 'area_cluster_C3', 'area_cluster_C4', 'area_cluster_C5', 'area_cluster_C6', 'area_cluster_C7', 'area_cluster_C9', 'area_cluster_Other', 'transmission_type_Manual', 'is_rear_window_defogger_Yes', 'is_brake_assist_Yes', 'is_power_steering_Yes', 'is_day_night_rear_view_mirror_Yes', 'is_ecw_Yes']
@@ -1100,7 +1156,7 @@ Final number of features: 9</code></pre>
 <div id="b00e66f3bec6c30e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-02-24T01:15:44.090920291Z&quot;,&quot;start_time&quot;:&quot;2026-02-24T01:15:43.961860592Z&quot;}}" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>best_model.summary()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>best_model.summary()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="11">
 <table class="simpletable caption-top table table-sm table-striped small">
@@ -1257,16 +1313,15 @@ Final number of features: 9</code></pre>
 </table>
 </div>
 </div>
-</section>
-<section id="lowest-chances-to-claim-ordered-by-importance" class="level2">
-<h2 class="anchored" data-anchor-id="lowest-chances-to-claim-ordered-by-importance">Lowest chances to claim, ordered by importance:</h2>
+<section id="lower-claim-risk-by-coefficient-size" class="level3">
+<h3 class="anchored" data-anchor-id="lower-claim-risk-by-coefficient-size">Lower claim risk (by coefficient size)</h3>
 <ol type="1">
 <li>The older the car (<code>age_of_car</code>) with -3.53</li>
 <li>Area C9 and C10 (<code>area_cluster</code>) with -0.19</li>
 </ol>
 </section>
-<section id="higher-chances-to-claim-ordered-by-importance" class="level2">
-<h2 class="anchored" data-anchor-id="higher-chances-to-claim-ordered-by-importance">Higher chances to claim, ordered by importance:</h2>
+<section id="higher-claim-risk-by-coefficient-size" class="level3">
+<h3 class="anchored" data-anchor-id="higher-claim-risk-by-coefficient-size">Higher claim risk (by coefficient size)</h3>
 <ol type="1">
 <li>The longer someone has the policy (<code>policy_tenure</code>) with 0.84</li>
 <li>The older the driver (<code>age_of_policyholder</code>) with 0.30</li>
@@ -1274,93 +1329,98 @@ Final number of features: 9</code></pre>
 <div id="8aaaefa89cc2c78f" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T14:24:18.608373Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T14:24:18.537194Z&quot;}}" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels_utils <span class="im">import</span> plot_coef</span>
-<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>plot_coef(best_model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels_utils <span class="im">import</span> plot_coef</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>plot_coef(best_model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="insurance claim_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="insurance-claim_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
+</section>
+</section>
+<section id="model-bake-off" class="level2">
+<h2 class="anchored" data-anchor-id="model-bake-off">5. Model Bake-Off</h2>
+<p>We now compare three model families under identical conditions — <code>GridSearchCV</code> with <code>class_weight='balanced'</code>: <strong>Logistic Regression</strong> (linear baseline), <strong>Random Forest</strong> (bagging), and <strong>HistGradientBoosting</strong> (boosting). If the ensembles beat the linear model, that’s evidence of non-linear risk structure the logit can’t express.</p>
 <div id="7fa2edbe1e93cb65" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T14:25:28.657680Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T14:24:18.608938Z&quot;}}" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
-<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> HistGradientBoostingClassifier</span>
-<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="dv">42</span></span>
-<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV</span>
-<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
-<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
-<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a>logReg <span class="op">=</span> <span class="st">'Logistic Regression'</span></span>
-<span id="cb70-10"><a href="#cb70-10" aria-hidden="true" tabindex="-1"></a>forest <span class="op">=</span> <span class="st">'Random Forest'</span></span>
-<span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a>hist <span class="op">=</span> <span class="st">'HistGradientBoosting'</span></span>
-<span id="cb70-12"><a href="#cb70-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-13"><a href="#cb70-13" aria-hidden="true" tabindex="-1"></a>models <span class="op">=</span> {</span>
-<span id="cb70-14"><a href="#cb70-14" aria-hidden="true" tabindex="-1"></a>    logReg: LogisticRegression(class_weight<span class="op">=</span><span class="st">'balanced'</span>, max_iter<span class="op">=</span><span class="dv">1000</span>, random_state<span class="op">=</span>seed),</span>
-<span id="cb70-15"><a href="#cb70-15" aria-hidden="true" tabindex="-1"></a>    forest: RandomForestClassifier(class_weight<span class="op">=</span><span class="st">'balanced'</span>, random_state<span class="op">=</span>seed),</span>
-<span id="cb70-16"><a href="#cb70-16" aria-hidden="true" tabindex="-1"></a>    hist: HistGradientBoostingClassifier(class_weight<span class="op">=</span><span class="st">'balanced'</span>, random_state<span class="op">=</span>seed)</span>
-<span id="cb70-17"><a href="#cb70-17" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb70-18"><a href="#cb70-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-19"><a href="#cb70-19" aria-hidden="true" tabindex="-1"></a>param_grids <span class="op">=</span> {</span>
-<span id="cb70-20"><a href="#cb70-20" aria-hidden="true" tabindex="-1"></a>    logReg: {</span>
-<span id="cb70-21"><a href="#cb70-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">'C'</span>: [<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">1.0</span>, <span class="fl">10.0</span>],</span>
-<span id="cb70-22"><a href="#cb70-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">'solver'</span>: [<span class="st">'liblinear'</span>, <span class="st">'saga'</span>]</span>
-<span id="cb70-23"><a href="#cb70-23" aria-hidden="true" tabindex="-1"></a>    },</span>
-<span id="cb70-24"><a href="#cb70-24" aria-hidden="true" tabindex="-1"></a>    forest: {</span>
-<span id="cb70-25"><a href="#cb70-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">'n_estimators'</span>: [<span class="dv">100</span>, <span class="dv">300</span>],</span>
-<span id="cb70-26"><a href="#cb70-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">'max_depth'</span>: [<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>],</span>
-<span id="cb70-27"><a href="#cb70-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">'min_samples_leaf'</span>: [<span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">10</span>]</span>
-<span id="cb70-28"><a href="#cb70-28" aria-hidden="true" tabindex="-1"></a>    },</span>
-<span id="cb70-29"><a href="#cb70-29" aria-hidden="true" tabindex="-1"></a>    hist: {</span>
-<span id="cb70-30"><a href="#cb70-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">'learning_rate'</span>: [<span class="fl">0.01</span>, <span class="fl">0.05</span>, <span class="fl">0.1</span>],</span>
-<span id="cb70-31"><a href="#cb70-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">'max_iter'</span>: [<span class="dv">100</span>, <span class="dv">300</span>],</span>
-<span id="cb70-32"><a href="#cb70-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">'max_depth'</span>: [<span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">7</span>],</span>
-<span id="cb70-33"><a href="#cb70-33" aria-hidden="true" tabindex="-1"></a>        <span class="st">'l2_regularization'</span>: [<span class="fl">0.0</span>, <span class="fl">1.0</span>]</span>
-<span id="cb70-34"><a href="#cb70-34" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb70-35"><a href="#cb70-35" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb70-36"><a href="#cb70-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-37"><a href="#cb70-37" aria-hidden="true" tabindex="-1"></a>best_models <span class="op">=</span> {}</span>
-<span id="cb70-38"><a href="#cb70-38" aria-hidden="true" tabindex="-1"></a>best_scores <span class="op">=</span> {}</span>
-<span id="cb70-39"><a href="#cb70-39" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
-<span id="cb70-40"><a href="#cb70-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-41"><a href="#cb70-41" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb70-42"><a href="#cb70-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-43"><a href="#cb70-43" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'const'</span> <span class="kw">in</span> X_clean.columns:</span>
-<span id="cb70-44"><a href="#cb70-44" aria-hidden="true" tabindex="-1"></a>    X_clean <span class="op">=</span> X_clean.drop(<span class="st">'const'</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb70-45"><a href="#cb70-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-46"><a href="#cb70-46" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X_clean, y, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span>seed, stratify<span class="op">=</span>y)</span>
-<span id="cb70-47"><a href="#cb70-47" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
-<span id="cb70-48"><a href="#cb70-48" aria-hidden="true" tabindex="-1"></a>X_train_scaled <span class="op">=</span> pd.DataFrame(scaler.fit_transform(X_train), columns<span class="op">=</span>X_train.columns)</span>
-<span id="cb70-49"><a href="#cb70-49" aria-hidden="true" tabindex="-1"></a>X_test_scaled <span class="op">=</span> pd.DataFrame(scaler.transform(X_test), columns<span class="op">=</span>X_test.columns)</span>
-<span id="cb70-50"><a href="#cb70-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-51"><a href="#cb70-51" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name <span class="kw">in</span> models.keys():</span>
-<span id="cb70-52"><a href="#cb70-52" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Running Grid Search for </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">..."</span>)</span>
-<span id="cb70-53"><a href="#cb70-53" aria-hidden="true" tabindex="-1"></a>    start_time <span class="op">=</span> time.time()</span>
-<span id="cb70-54"><a href="#cb70-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-55"><a href="#cb70-55" aria-hidden="true" tabindex="-1"></a>    grid <span class="op">=</span> GridSearchCV(</span>
-<span id="cb70-56"><a href="#cb70-56" aria-hidden="true" tabindex="-1"></a>        estimator<span class="op">=</span>models[name],</span>
-<span id="cb70-57"><a href="#cb70-57" aria-hidden="true" tabindex="-1"></a>        param_grid<span class="op">=</span>param_grids[name],</span>
-<span id="cb70-58"><a href="#cb70-58" aria-hidden="true" tabindex="-1"></a>        scoring<span class="op">=</span><span class="st">'roc_auc'</span>,</span>
-<span id="cb70-59"><a href="#cb70-59" aria-hidden="true" tabindex="-1"></a>        cv<span class="op">=</span><span class="dv">5</span>,</span>
-<span id="cb70-60"><a href="#cb70-60" aria-hidden="true" tabindex="-1"></a>        n_jobs<span class="op">=-</span><span class="dv">1</span></span>
-<span id="cb70-61"><a href="#cb70-61" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb70-62"><a href="#cb70-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-63"><a href="#cb70-63" aria-hidden="true" tabindex="-1"></a>    grid.fit(X_train_scaled, y_train)</span>
-<span id="cb70-64"><a href="#cb70-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-65"><a href="#cb70-65" aria-hidden="true" tabindex="-1"></a>    elapsed_time <span class="op">=</span> (time.time() <span class="op">-</span> start_time) <span class="op">/</span> <span class="dv">60</span></span>
-<span id="cb70-66"><a href="#cb70-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-67"><a href="#cb70-67" aria-hidden="true" tabindex="-1"></a>    best_models[name] <span class="op">=</span> grid.best_estimator_</span>
-<span id="cb70-68"><a href="#cb70-68" aria-hidden="true" tabindex="-1"></a>    best_scores[name] <span class="op">=</span> grid.best_score_</span>
-<span id="cb70-69"><a href="#cb70-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-70"><a href="#cb70-70" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  -&gt; Best Cross-Validated AUC: </span><span class="sc">{</span>grid<span class="sc">.</span>best_score_<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb70-71"><a href="#cb70-71" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  -&gt; Optimal Params: </span><span class="sc">{</span>grid<span class="sc">.</span>best_params_<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb70-72"><a href="#cb70-72" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  -&gt; Time taken: </span><span class="sc">{</span>elapsed_time<span class="sc">:.2f}</span><span class="ss"> minutes</span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> HistGradientBoostingClassifier</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="dv">42</span></span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV</span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-9"><a href="#cb71-9" aria-hidden="true" tabindex="-1"></a>logReg <span class="op">=</span> <span class="st">'Logistic Regression'</span></span>
+<span id="cb71-10"><a href="#cb71-10" aria-hidden="true" tabindex="-1"></a>forest <span class="op">=</span> <span class="st">'Random Forest'</span></span>
+<span id="cb71-11"><a href="#cb71-11" aria-hidden="true" tabindex="-1"></a>hist <span class="op">=</span> <span class="st">'HistGradientBoosting'</span></span>
+<span id="cb71-12"><a href="#cb71-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-13"><a href="#cb71-13" aria-hidden="true" tabindex="-1"></a>models <span class="op">=</span> {</span>
+<span id="cb71-14"><a href="#cb71-14" aria-hidden="true" tabindex="-1"></a>    logReg: LogisticRegression(class_weight<span class="op">=</span><span class="st">'balanced'</span>, max_iter<span class="op">=</span><span class="dv">1000</span>, random_state<span class="op">=</span>seed),</span>
+<span id="cb71-15"><a href="#cb71-15" aria-hidden="true" tabindex="-1"></a>    forest: RandomForestClassifier(class_weight<span class="op">=</span><span class="st">'balanced'</span>, random_state<span class="op">=</span>seed),</span>
+<span id="cb71-16"><a href="#cb71-16" aria-hidden="true" tabindex="-1"></a>    hist: HistGradientBoostingClassifier(class_weight<span class="op">=</span><span class="st">'balanced'</span>, random_state<span class="op">=</span>seed)</span>
+<span id="cb71-17"><a href="#cb71-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb71-18"><a href="#cb71-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-19"><a href="#cb71-19" aria-hidden="true" tabindex="-1"></a>param_grids <span class="op">=</span> {</span>
+<span id="cb71-20"><a href="#cb71-20" aria-hidden="true" tabindex="-1"></a>    logReg: {</span>
+<span id="cb71-21"><a href="#cb71-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">'C'</span>: [<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">1.0</span>, <span class="fl">10.0</span>],</span>
+<span id="cb71-22"><a href="#cb71-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">'solver'</span>: [<span class="st">'liblinear'</span>, <span class="st">'saga'</span>]</span>
+<span id="cb71-23"><a href="#cb71-23" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb71-24"><a href="#cb71-24" aria-hidden="true" tabindex="-1"></a>    forest: {</span>
+<span id="cb71-25"><a href="#cb71-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">'n_estimators'</span>: [<span class="dv">100</span>, <span class="dv">300</span>],</span>
+<span id="cb71-26"><a href="#cb71-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">'max_depth'</span>: [<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>],</span>
+<span id="cb71-27"><a href="#cb71-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">'min_samples_leaf'</span>: [<span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">10</span>]</span>
+<span id="cb71-28"><a href="#cb71-28" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb71-29"><a href="#cb71-29" aria-hidden="true" tabindex="-1"></a>    hist: {</span>
+<span id="cb71-30"><a href="#cb71-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">'learning_rate'</span>: [<span class="fl">0.01</span>, <span class="fl">0.05</span>, <span class="fl">0.1</span>],</span>
+<span id="cb71-31"><a href="#cb71-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">'max_iter'</span>: [<span class="dv">100</span>, <span class="dv">300</span>],</span>
+<span id="cb71-32"><a href="#cb71-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">'max_depth'</span>: [<span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">7</span>],</span>
+<span id="cb71-33"><a href="#cb71-33" aria-hidden="true" tabindex="-1"></a>        <span class="st">'l2_regularization'</span>: [<span class="fl">0.0</span>, <span class="fl">1.0</span>]</span>
+<span id="cb71-34"><a href="#cb71-34" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb71-35"><a href="#cb71-35" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb71-36"><a href="#cb71-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-37"><a href="#cb71-37" aria-hidden="true" tabindex="-1"></a>best_models <span class="op">=</span> {}</span>
+<span id="cb71-38"><a href="#cb71-38" aria-hidden="true" tabindex="-1"></a>best_scores <span class="op">=</span> {}</span>
+<span id="cb71-39"><a href="#cb71-39" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb71-40"><a href="#cb71-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-41"><a href="#cb71-41" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb71-42"><a href="#cb71-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-43"><a href="#cb71-43" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'const'</span> <span class="kw">in</span> X_clean.columns:</span>
+<span id="cb71-44"><a href="#cb71-44" aria-hidden="true" tabindex="-1"></a>    X_clean <span class="op">=</span> X_clean.drop(<span class="st">'const'</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb71-45"><a href="#cb71-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-46"><a href="#cb71-46" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X_clean, y, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span>seed, stratify<span class="op">=</span>y)</span>
+<span id="cb71-47"><a href="#cb71-47" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb71-48"><a href="#cb71-48" aria-hidden="true" tabindex="-1"></a>X_train_scaled <span class="op">=</span> pd.DataFrame(scaler.fit_transform(X_train), columns<span class="op">=</span>X_train.columns)</span>
+<span id="cb71-49"><a href="#cb71-49" aria-hidden="true" tabindex="-1"></a>X_test_scaled <span class="op">=</span> pd.DataFrame(scaler.transform(X_test), columns<span class="op">=</span>X_test.columns)</span>
+<span id="cb71-50"><a href="#cb71-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-51"><a href="#cb71-51" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name <span class="kw">in</span> models.keys():</span>
+<span id="cb71-52"><a href="#cb71-52" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Running Grid Search for </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">..."</span>)</span>
+<span id="cb71-53"><a href="#cb71-53" aria-hidden="true" tabindex="-1"></a>    start_time <span class="op">=</span> time.time()</span>
+<span id="cb71-54"><a href="#cb71-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-55"><a href="#cb71-55" aria-hidden="true" tabindex="-1"></a>    grid <span class="op">=</span> GridSearchCV(</span>
+<span id="cb71-56"><a href="#cb71-56" aria-hidden="true" tabindex="-1"></a>        estimator<span class="op">=</span>models[name],</span>
+<span id="cb71-57"><a href="#cb71-57" aria-hidden="true" tabindex="-1"></a>        param_grid<span class="op">=</span>param_grids[name],</span>
+<span id="cb71-58"><a href="#cb71-58" aria-hidden="true" tabindex="-1"></a>        scoring<span class="op">=</span><span class="st">'roc_auc'</span>,</span>
+<span id="cb71-59"><a href="#cb71-59" aria-hidden="true" tabindex="-1"></a>        cv<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb71-60"><a href="#cb71-60" aria-hidden="true" tabindex="-1"></a>        n_jobs<span class="op">=-</span><span class="dv">1</span></span>
+<span id="cb71-61"><a href="#cb71-61" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb71-62"><a href="#cb71-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-63"><a href="#cb71-63" aria-hidden="true" tabindex="-1"></a>    grid.fit(X_train_scaled, y_train)</span>
+<span id="cb71-64"><a href="#cb71-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-65"><a href="#cb71-65" aria-hidden="true" tabindex="-1"></a>    elapsed_time <span class="op">=</span> (time.time() <span class="op">-</span> start_time) <span class="op">/</span> <span class="dv">60</span></span>
+<span id="cb71-66"><a href="#cb71-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-67"><a href="#cb71-67" aria-hidden="true" tabindex="-1"></a>    best_models[name] <span class="op">=</span> grid.best_estimator_</span>
+<span id="cb71-68"><a href="#cb71-68" aria-hidden="true" tabindex="-1"></a>    best_scores[name] <span class="op">=</span> grid.best_score_</span>
+<span id="cb71-69"><a href="#cb71-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-70"><a href="#cb71-70" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  -&gt; Best Cross-Validated AUC: </span><span class="sc">{</span>grid<span class="sc">.</span>best_score_<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb71-71"><a href="#cb71-71" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  -&gt; Optimal Params: </span><span class="sc">{</span>grid<span class="sc">.</span>best_params_<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb71-72"><a href="#cb71-72" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  -&gt; Time taken: </span><span class="sc">{</span>elapsed_time<span class="sc">:.2f}</span><span class="ss"> minutes</span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Running Grid Search for Logistic Regression...
@@ -1382,40 +1442,41 @@ Running Grid Search for HistGradientBoosting...
 </div>
 <p>We are going to calculate what is the optimal threshold, because probably keeping it at 50%, we will miss a lot of claims.</p>
 </section>
-<section id="taking-a-deep-dive-on-the-random-forest-best-model." class="level1">
-<h1>Taking a deep dive on the random forest best model.</h1>
+<section id="threshold-tuning" class="level2">
+<h2 class="anchored" data-anchor-id="threshold-tuning">6. Threshold Tuning</h2>
+<p>We now take a deeper look at the winning model from the bake-off — <strong>HistGradientBoosting</strong> — and tune its decision threshold using Youden’s J statistic, which balances the true-positive rate against the false-positive rate.</p>
 <div id="8b3ab9f30e0c1cd1" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T14:25:28.834016Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T14:25:28.692885Z&quot;}}" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix, classification_report</span>
-<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_curve</span>
-<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>best_model <span class="op">=</span> best_models[hist]</span>
-<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>y_probs <span class="op">=</span> best_model.predict_proba(X_test_scaled)[:, <span class="dv">1</span>]</span>
-<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a>fpr, tpr, thresholds <span class="op">=</span> roc_curve(y_test, y_probs)</span>
-<span id="cb72-9"><a href="#cb72-9" aria-hidden="true" tabindex="-1"></a>j_scores <span class="op">=</span> tpr <span class="op">-</span> fpr</span>
-<span id="cb72-10"><a href="#cb72-10" aria-hidden="true" tabindex="-1"></a>best_index <span class="op">=</span> np.argmax(j_scores)</span>
-<span id="cb72-11"><a href="#cb72-11" aria-hidden="true" tabindex="-1"></a>optimal_threshold <span class="op">=</span> thresholds[best_index]</span>
-<span id="cb72-12"><a href="#cb72-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span> <span class="op">*</span> <span class="dv">50</span>)</span>
-<span id="cb72-13"><a href="#cb72-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"DEFAULT THRESHOLD: 0.5000"</span>)</span>
-<span id="cb72-14"><a href="#cb72-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"OPTIMAL THRESHOLD: </span><span class="sc">{</span>optimal_threshold<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb72-15"><a href="#cb72-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span> <span class="op">*</span> <span class="dv">50</span>)</span>
-<span id="cb72-16"><a href="#cb72-16" aria-hidden="true" tabindex="-1"></a>y_pred_optimal <span class="op">=</span> (y_probs <span class="op">&gt;=</span> optimal_threshold).astype(<span class="bu">int</span>)</span>
-<span id="cb72-17"><a href="#cb72-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb72-18"><a href="#cb72-18" aria-hidden="true" tabindex="-1"></a>cm_optimal <span class="op">=</span> confusion_matrix(y_test, y_pred_optimal)</span>
-<span id="cb72-19"><a href="#cb72-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb72-20"><a href="#cb72-20" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">5</span>))</span>
-<span id="cb72-21"><a href="#cb72-21" aria-hidden="true" tabindex="-1"></a>sns.heatmap(cm_optimal, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">'d'</span>, cmap<span class="op">=</span><span class="st">'Reds'</span>,</span>
-<span id="cb72-22"><a href="#cb72-22" aria-hidden="true" tabindex="-1"></a>            xticklabels<span class="op">=</span>[<span class="st">'Predicted: Safe (0)'</span>, <span class="st">'Predicted: Claim (1)'</span>],</span>
-<span id="cb72-23"><a href="#cb72-23" aria-hidden="true" tabindex="-1"></a>            yticklabels<span class="op">=</span>[<span class="st">'Actual: Safe (0)'</span>, <span class="st">'Actual: Claim (1)'</span>])</span>
-<span id="cb72-24"><a href="#cb72-24" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="ss">f'Confusion Matrix (Optimal Threshold = </span><span class="sc">{</span>optimal_threshold<span class="sc">:.3f}</span><span class="ss">)'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
-<span id="cb72-25"><a href="#cb72-25" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb72-26"><a href="#cb72-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb72-27"><a href="#cb72-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb72-28"><a href="#cb72-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Classification Report (Using Optimal Threshold):"</span>)</span>
-<span id="cb72-29"><a href="#cb72-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test, y_pred_optimal))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix, classification_report</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_curve</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>best_model <span class="op">=</span> best_models[hist]</span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>y_probs <span class="op">=</span> best_model.predict_proba(X_test_scaled)[:, <span class="dv">1</span>]</span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>fpr, tpr, thresholds <span class="op">=</span> roc_curve(y_test, y_probs)</span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>j_scores <span class="op">=</span> tpr <span class="op">-</span> fpr</span>
+<span id="cb73-10"><a href="#cb73-10" aria-hidden="true" tabindex="-1"></a>best_index <span class="op">=</span> np.argmax(j_scores)</span>
+<span id="cb73-11"><a href="#cb73-11" aria-hidden="true" tabindex="-1"></a>optimal_threshold <span class="op">=</span> thresholds[best_index]</span>
+<span id="cb73-12"><a href="#cb73-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span> <span class="op">*</span> <span class="dv">50</span>)</span>
+<span id="cb73-13"><a href="#cb73-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"DEFAULT THRESHOLD: 0.5000"</span>)</span>
+<span id="cb73-14"><a href="#cb73-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"OPTIMAL THRESHOLD: </span><span class="sc">{</span>optimal_threshold<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb73-15"><a href="#cb73-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span> <span class="op">*</span> <span class="dv">50</span>)</span>
+<span id="cb73-16"><a href="#cb73-16" aria-hidden="true" tabindex="-1"></a>y_pred_optimal <span class="op">=</span> (y_probs <span class="op">&gt;=</span> optimal_threshold).astype(<span class="bu">int</span>)</span>
+<span id="cb73-17"><a href="#cb73-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-18"><a href="#cb73-18" aria-hidden="true" tabindex="-1"></a>cm_optimal <span class="op">=</span> confusion_matrix(y_test, y_pred_optimal)</span>
+<span id="cb73-19"><a href="#cb73-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-20"><a href="#cb73-20" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">5</span>))</span>
+<span id="cb73-21"><a href="#cb73-21" aria-hidden="true" tabindex="-1"></a>sns.heatmap(cm_optimal, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">'d'</span>, cmap<span class="op">=</span><span class="st">'Reds'</span>,</span>
+<span id="cb73-22"><a href="#cb73-22" aria-hidden="true" tabindex="-1"></a>            xticklabels<span class="op">=</span>[<span class="st">'Predicted: Safe (0)'</span>, <span class="st">'Predicted: Claim (1)'</span>],</span>
+<span id="cb73-23"><a href="#cb73-23" aria-hidden="true" tabindex="-1"></a>            yticklabels<span class="op">=</span>[<span class="st">'Actual: Safe (0)'</span>, <span class="st">'Actual: Claim (1)'</span>])</span>
+<span id="cb73-24"><a href="#cb73-24" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="ss">f'Confusion Matrix (Optimal Threshold = </span><span class="sc">{</span>optimal_threshold<span class="sc">:.3f}</span><span class="ss">)'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb73-25"><a href="#cb73-25" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb73-26"><a href="#cb73-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb73-27"><a href="#cb73-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-28"><a href="#cb73-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Classification Report (Using Optimal Threshold):"</span>)</span>
+<span id="cb73-29"><a href="#cb73-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test, y_pred_optimal))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>==================================================
@@ -1426,7 +1487,7 @@ OPTIMAL THRESHOLD: 0.4956
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="insurance claim_files/figure-html/cell-16-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="insurance-claim_files/figure-html/cell-16-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1458,22 +1519,22 @@ weighted avg       0.91      0.55      0.66     17578
 <div id="216a5e5c8148b4c4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T14:25:31.222325Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T14:25:28.842929Z&quot;}}" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shap</span>
-<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Calculating SHAP values"</span>)</span>
-<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>explainer <span class="op">=</span> shap.TreeExplainer(best_model)</span>
-<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>shap_values <span class="op">=</span> explainer.shap_values(X_test_scaled)</span>
-<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">isinstance</span>(shap_values, <span class="bu">list</span>):</span>
-<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>    shap_values_to_plot <span class="op">=</span> shap_values[<span class="dv">1</span>]</span>
-<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a><span class="cf">elif</span> <span class="bu">len</span>(shap_values.shape) <span class="op">==</span> <span class="dv">3</span>:</span>
-<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>    shap_values_to_plot <span class="op">=</span> shap_values[:, :, <span class="dv">1</span>]</span>
-<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a>    shap_values_to_plot <span class="op">=</span> shap_values</span>
-<span id="cb75-13"><a href="#cb75-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb75-14"><a href="#cb75-14" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
-<span id="cb75-15"><a href="#cb75-15" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"SHAP Summary Plot: Drivers of Insurance Claims"</span>, fontsize<span class="op">=</span><span class="dv">16</span>, pad<span class="op">=</span><span class="dv">20</span>)</span>
-<span id="cb75-16"><a href="#cb75-16" aria-hidden="true" tabindex="-1"></a>shap.summary_plot(shap_values_to_plot, X_test_scaled, plot_type<span class="op">=</span><span class="st">"dot"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shap</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Calculating SHAP values"</span>)</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>explainer <span class="op">=</span> shap.TreeExplainer(best_model)</span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>shap_values <span class="op">=</span> explainer.shap_values(X_test_scaled)</span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">isinstance</span>(shap_values, <span class="bu">list</span>):</span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>    shap_values_to_plot <span class="op">=</span> shap_values[<span class="dv">1</span>]</span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a><span class="cf">elif</span> <span class="bu">len</span>(shap_values.shape) <span class="op">==</span> <span class="dv">3</span>:</span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>    shap_values_to_plot <span class="op">=</span> shap_values[:, :, <span class="dv">1</span>]</span>
+<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a>    shap_values_to_plot <span class="op">=</span> shap_values</span>
+<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb76-15"><a href="#cb76-15" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"SHAP Summary Plot: Drivers of Insurance Claims"</span>, fontsize<span class="op">=</span><span class="dv">16</span>, pad<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb76-16"><a href="#cb76-16" aria-hidden="true" tabindex="-1"></a>shap.summary_plot(shap_values_to_plot, X_test_scaled, plot_type<span class="op">=</span><span class="st">"dot"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Calculating SHAP values</code></pre>
@@ -1481,16 +1542,23 @@ weighted avg       0.91      0.55      0.66     17578
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="insurance claim_files/figure-html/cell-17-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="insurance-claim_files/figure-html/cell-17-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
+</section>
+</section>
+<section id="conclusions" class="level2">
+<h2 class="anchored" data-anchor-id="conclusions">7. Conclusions</h2>
 <ol type="1">
 <li>brand new policyholders are the safest drivers, while long-term nature steadily increases claim risk.</li>
 <li>The age of the vehicle acts as a massive risk shield. Brand new cars are most likely to file a claim, likely due to drivers using comprehensive coverage to fix minor damage on new investments.</li>
-<li>Vehicules equipped with luxury features cluster together as a disctinct risk factor, likely because their parts are significantly more expensive to repair, easily pushing minor incidents over the deductible.</li>
+<li>Vehicles equipped with luxury features cluster together as a distinct risk factor, likely because their parts are significantly more expensive to repair, easily pushing minor incidents over the deductible.</li>
 </ol>
+<section id="limitations" class="level3">
+<h3 class="anchored" data-anchor-id="limitations">Limitations</h3>
+<p>A cross-validated AUC of ~0.65 is typical for claim prediction — the signal in policy and vehicle attributes is genuinely weak, and results in this range are an honest ceiling rather than a modeling failure. Natural next steps: richer behavioral features (telematics — see the companion notebook), calibration analysis of the predicted probabilities, and a cost-based threshold instead of Youden’s J.</p>
 
 
 </section>
@@ -1583,7 +1651,7 @@ weighted avg       0.91      0.55      0.66     17578
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/migue-rc\.github\.io\/car-insurance\/");
+        var filterRegex = new RegExp("https:\/\/migue-rc\.github\.io\/car-insurance");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

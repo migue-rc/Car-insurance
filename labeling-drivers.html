@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Dataset</title>
+<title>Driver Behavior Profiling from Telematics</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -80,9 +80,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-3f230b53dc93e4a04bf4a3505d77a42a.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-0738663c7c037cf665a86e7eb60c4439.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-9f74c3406a507f2d1f67bd7731720ed3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-0738663c7c037cf665a86e7eb60c4439.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-22e386d673eb27a037a9ab8590791d54.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-df7de8fec9041e4cf553be1fa0c04d3f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-22e386d673eb27a037a9ab8590791d54.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -152,6 +152,17 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="local-style.css">
+<meta property="og:title" content="Driver Behavior Profiling from Telematics">
+<meta property="og:description" content="Two end-to-end machine learning projects on car insurance claims and driver telematics.">
+<meta property="og:image" content="https://migue-rc.github.io/car-insurance/labeling-drivers_files/figure-html/cell-4-output-1.png">
+<meta property="og:image:height" content="781">
+<meta property="og:image:width" content="871">
+<meta name="twitter:title" content="Driver Behavior Profiling from Telematics">
+<meta name="twitter:description" content="Two end-to-end machine learning projects on car insurance claims and driver telematics.">
+<meta name="twitter:image" content="https://migue-rc.github.io/car-insurance/labeling-drivers_files/figure-html/cell-4-output-1.png">
+<meta name="twitter:image-height" content="781">
+<meta name="twitter:image-width" content="871">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -349,8 +360,16 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#right-side-high-aggression-low-distraction" id="toc-right-side-high-aggression-low-distraction" class="nav-link active" data-scroll-target="#right-side-high-aggression-low-distraction">right side (High Aggression, Low Distraction)</a></li>
-  <li><a href="#prediction" id="toc-prediction" class="nav-link" data-scroll-target="#prediction">Prediction</a></li>
+  <li><a href="#the-dataset" id="toc-the-dataset" class="nav-link active" data-scroll-target="#the-dataset">1. The Dataset</a></li>
+  <li><a href="#correlation-structure" id="toc-correlation-structure" class="nav-link" data-scroll-target="#correlation-structure">2. Correlation Structure</a></li>
+  <li><a href="#dimensionality-reduction-pca" id="toc-dimensionality-reduction-pca" class="nav-link" data-scroll-target="#dimensionality-reduction-pca">3. Dimensionality Reduction (PCA)</a></li>
+  <li><a href="#reading-the-projection" id="toc-reading-the-projection" class="nav-link" data-scroll-target="#reading-the-projection">4. Reading the Projection</a>
+  <ul class="collapse">
+  <li><a href="#right-side-high-aggression-low-distraction" id="toc-right-side-high-aggression-low-distraction" class="nav-link" data-scroll-target="#right-side-high-aggression-low-distraction">Right side — high aggression, low distraction</a></li>
+  </ul></li>
+  <li><a href="#if-you-could-only-afford-two-sensors" id="toc-if-you-could-only-afford-two-sensors" class="nav-link" data-scroll-target="#if-you-could-only-afford-two-sensors">5. If You Could Only Afford Two Sensors</a></li>
+  <li><a href="#a-reusable-prediction-pipeline" id="toc-a-reusable-prediction-pipeline" class="nav-link" data-scroll-target="#a-reusable-prediction-pipeline">6. A Reusable Prediction Pipeline</a></li>
+  <li><a href="#conclusions" id="toc-conclusions" class="nav-link" data-scroll-target="#conclusions">7. Conclusions</a></li>
   </ul>
 </nav>
     </div>
@@ -360,7 +379,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Dataset</h1>
+<h1 class="title">Driver Behavior Profiling from Telematics</h1>
 </div>
 
 
@@ -377,7 +396,10 @@ window.Quarto = {
 </header>
 
 
-<p>It was synthetically generated, taken from kaggle <a href="https://www.kaggle.com/datasets/sonalshinde123/vehicle-telemetry-for-driver-behavior-analysis">vehicle telemetry for driver behavior</a>. Originally the dataset has a target label, but we are going to remove it and explore the data without those labels. The idea is to see if we can identify and clasify drivers behaviors based on their telemetry data.</p>
+<p>Can we recognise driving behaviors — safe, aggressive, distracted — from raw sensor data alone, without ever seeing a label? This notebook finds out, using PCA to compress the sensor streams and K-Means to discover the groups.</p>
+<section id="the-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="the-dataset">1. The Dataset</h2>
+<p>It was synthetically generated, taken from kaggle <a href="https://www.kaggle.com/datasets/sonalshinde123/vehicle-telemetry-for-driver-behavior-analysis">vehicle telemetry for driver behavior</a>. Originally the dataset has a target label, but we are going to remove it and explore the data without those labels. The idea is to see if we can identify and classify drivers behaviors based on their telemetry data.</p>
 <div id="dc9eada488d22cf3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T21:18:32.765977Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T21:18:32.712454Z&quot;}}" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
@@ -414,6 +436,10 @@ memory usage: 2.3 MB</code></pre>
 </div>
 </div>
 <p>No duplicated values and everything is numeric, a good scenario for a <strong>PCA</strong></p>
+</section>
+<section id="correlation-structure" class="level2">
+<h2 class="anchored" data-anchor-id="correlation-structure">2. Correlation Structure</h2>
+<p>Before compressing anything, we look at how the sensors relate to each other — the correlation blocks below are exactly what PCA will exploit.</p>
 <div id="4ecc647e85fa4143" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T21:18:33.054243Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T21:18:32.798677Z&quot;}}" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
@@ -442,13 +468,13 @@ memory usage: 2.3 MB</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="labeling drivers_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="labeling-drivers_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>The <code>steering_angle</code> is <strong>truly independant</strong>, all correlations are very close to <span class="math inline">\(0\)</span>.</p>
-<p>Correlation between <code>phone_usage</code> and <code>reaction_time</code> if very high at <span class="math inline">\(0.91\)</span>, suggest that the <strong>if the driver is on their phone, their reaction time will be slow</strong>, and if the reaction time is slow, it’s very likely that the driver was on their phone.</p>
+<p>The <code>steering_angle</code> is <strong>truly independent</strong>, all correlations are very close to <span class="math inline">\(0\)</span>.</p>
+<p>Correlation between <code>phone_usage</code> and <code>reaction_time</code> is very high at <span class="math inline">\(0.91\)</span>, suggest that the <strong>if the driver is on their phone, their reaction time will be slow</strong>, and if the reaction time is slow, it’s very likely that the driver was on their phone.</p>
 <div id="b8adc1f8cf1fdadf" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T21:18:33.148295Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T21:18:33.055850Z&quot;}}" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
@@ -476,14 +502,18 @@ memory usage: 2.3 MB</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="labeling drivers_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="labeling-drivers_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Looking at the correlation of <code>accel_x</code>, <code>brake_pressure</code> and <code>throttle</code> we can infer that the “Agressive drivers” they <strong>press the gas and jump straight to smashing the brake pedal</strong> without “coasting.” This seems like a classic signature of “tailgating,” or speeding up to something, then panic breaking.</p>
-<p>The <code>speed_kmph</code> has a lower correlation, indicating that the Aggresion behavior is more about force, because probably <strong>we can find aggresive behavior not at high speeds</strong>.</p>
+<p>Looking at the correlation of <code>accel_x</code>, <code>brake_pressure</code> and <code>throttle</code> we can infer that aggressive drivers <strong>press the gas and jump straight to smashing the brake pedal</strong> without “coasting.” This seems like a classic signature of “tailgating,” or speeding up to something, then panic braking.</p>
+<p>The <code>speed_kmph</code> has a lower correlation, indicating that the aggression behavior is more about force, because probably <strong>we can find aggresive behavior not at high speeds</strong>.</p>
 <p>The difference on the correlation values between <code>accel_x</code> and <code>accel_y</code> with the other variables, tell us that the aggresive behavior is likely to happen in a <strong>straight line reckless driving</strong> rather than a drift king cornering behavior.</p>
+</section>
+<section id="dimensionality-reduction-pca" class="level2">
+<h2 class="anchored" data-anchor-id="dimensionality-reduction-pca">3. Dimensionality Reduction (PCA)</h2>
+<p>We standardize the features and let PCA find the directions of maximum variance. The scree plot tells us how many components are worth keeping.</p>
 <div id="765c1c9a2552eb91" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T21:18:45.021942Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T21:18:33.150671Z&quot;}}" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
@@ -503,7 +533,7 @@ memory usage: 2.3 MB</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="labeling drivers_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="labeling-drivers_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -539,7 +569,7 @@ Name: rsquare, dtype: float64</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="labeling drivers_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="labeling-drivers_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -656,7 +686,7 @@ if (outputEl) {{
                         })                };            </script>        </div>
 </div>
 </div>
-<p>with three components we can see a separation between those three. ## PC1 (Aggresive) highs: - <code>throttle</code> - <code>brake_pressure</code> - <code>accel_x</code> lows: - <code>headway_distance</code> ## PC2 (Distracted) highs: - <code>lane_deviation</code> - <code>phone_usage</code> - <code>reaction_time</code> ## PC3 (Chill) lows: - <code>steering_angle</code></p>
+<p>with three components we can see a separation between those three. ### PC1 — aggression highs: - <code>throttle</code> - <code>brake_pressure</code> - <code>accel_x</code> lows: - <code>headway_distance</code> ### PC2 — distraction highs: - <code>lane_deviation</code> - <code>phone_usage</code> - <code>reaction_time</code> ### PC3 — steering geometry lows: - <code>steering_angle</code></p>
 <p>Why does the <strong>PC3</strong> have the lowest steering_angle value?</p>
 <div id="738939cdefae3177" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T21:18:56.071490Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T21:18:55.967977Z&quot;}}" data-execution_count="11">
 <details class="code-fold">
@@ -671,7 +701,7 @@ if (outputEl) {{
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="labeling drivers_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="labeling-drivers_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -694,14 +724,17 @@ if (outputEl) {{
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="labeling drivers_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="labeling-drivers_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<section id="right-side-high-aggression-low-distraction" class="level2">
-<h2 class="anchored" data-anchor-id="right-side-high-aggression-low-distraction">right side (High Aggression, Low Distraction)</h2>
-<p>that represents the Aggressive drivers, they have higher values on the PC1. ## top left (High Distraction, Low Aggression) that represents the distracted drivers, they have higher values on the PC2. ## bottom left the Safe-Chill behavior, where they don’t have any high value on the PC1 or PC2 components.</p>
+</section>
+<section id="reading-the-projection" class="level2">
+<h2 class="anchored" data-anchor-id="reading-the-projection">4. Reading the Projection</h2>
+<section id="right-side-high-aggression-low-distraction" class="level3">
+<h3 class="anchored" data-anchor-id="right-side-high-aggression-low-distraction">Right side — high aggression, low distraction</h3>
+<p>that represents the Aggressive drivers, they have higher values on the PC1. ### Top left — high distraction, low aggression that represents the distracted drivers, they have higher values on the PC2. ### Bottom left — the safe drivers the Safe-Chill behavior, where they don’t have any high value on the PC1 or PC2 components.</p>
 <div id="fc30235c6f486da9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T21:18:56.312370Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T21:18:56.166831Z&quot;}}" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
@@ -716,16 +749,20 @@ if (outputEl) {{
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="labeling drivers_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="labeling-drivers_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>if we can afford only 2 sensors for detecting distracted behavior, we should choose <code>phone_usage</code> and <code>reaction_time</code>. if we repeat the same exersice for detecting aggresive behavior, we should choose <code>breal_pressure</code> and <code>throttle</code>.</p>
 </section>
-<section id="prediction" class="level1">
-<h1>Prediction</h1>
-<p>For this part we are going to do create a pipeline using scikit-learn</p>
+</section>
+<section id="if-you-could-only-afford-two-sensors" class="level2">
+<h2 class="anchored" data-anchor-id="if-you-could-only-afford-two-sensors">5. If You Could Only Afford Two Sensors</h2>
+<p>if we can afford only 2 sensors for detecting distracted behavior, we should choose <code>phone_usage</code> and <code>reaction_time</code>. if we repeat the same exercise for detecting aggressive behavior, we should choose <code>brake_pressure</code> and <code>throttle</code>.</p>
+</section>
+<section id="a-reusable-prediction-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="a-reusable-prediction-pipeline">6. A Reusable Prediction Pipeline</h2>
+<p>We package the whole approach — scaling, PCA, K-Means — into a single scikit-learn pipeline that can label new telematics data end to end.</p>
 <div id="e7ce054f62311dbc" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T21:18:56.935460Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T21:18:56.313762Z&quot;}}" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
@@ -766,7 +803,8 @@ Homogeneity Score:   1.00</code></pre>
 </div>
 </div>
 <p>We achieved an Adjusted Rand Score of <span class="math inline">\(1.00\)</span>. This indicates a perfect alignment between our unsupervised cluster and the ground truth.</p>
-<p>It confirms that the driver behaviors (Safe, Aggressive and Distracted) are <strong>linearly separable in the PCA space</strong>, and our pipeline can autonomously indentify these profiles.</p>
+<p>It confirms that the driver behaviors (Safe, Aggressive and Distracted) are <strong>linearly separable in the PCA space</strong>, and our pipeline can autonomously identify these profiles.</p>
+<p>A perfect score deserves a caveat: this dataset is synthetic, and its generator produced cleanly separable behaviors. Real telematics data is far noisier and would not cluster perfectly — what the score validates is the pipeline, not production-readiness.</p>
 <div id="56b2d9d25e7b0702" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-03-19T21:18:57.194641Z&quot;,&quot;start_time&quot;:&quot;2026-03-19T21:18:57.068325Z&quot;}}" data-execution_count="16">
 <details class="code-fold">
 <summary>Code</summary>
@@ -785,11 +823,20 @@ Homogeneity Score:   1.00</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="labeling drivers_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="labeling-drivers_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
+</section>
+<section id="conclusions" class="level2">
+<h2 class="anchored" data-anchor-id="conclusions">7. Conclusions</h2>
+<ol type="1">
+<li><strong>The behaviors are real, structured signal.</strong> Three principal components — aggression, distraction, and steering geometry — explain ~80% of the variance in the raw sensor streams.</li>
+<li><strong>Unsupervised methods recover the ground truth.</strong> K-Means on the PCA space matches the withheld labels perfectly (ARI 1.00) on this synthetic dataset.</li>
+<li><strong>Sensor budgets can be optimized.</strong> If hardware is constrained, <code>phone_usage</code> + <code>reaction_time</code> capture distraction, and <code>brake_pressure</code> + <code>throttle</code> capture aggression.</li>
+<li><strong>The pipeline is deployable.</strong> The scaling → PCA → K-Means pipeline labels new data end to end and would serve as a solid baseline for real, noisier telematics — where the next steps are robustness checks, cluster-stability analysis, and drift monitoring.</li>
+</ol>
 
 
 </section>
@@ -881,7 +928,7 @@ Homogeneity Score:   1.00</code></pre>
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/migue-rc\.github\.io\/car-insurance\/");
+        var filterRegex = new RegExp("https:\/\/migue-rc\.github\.io\/car-insurance");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
